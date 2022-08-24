@@ -3,6 +3,9 @@ require "httparty"
 require "date"
 require "sinatra"
 
+set :port, 3031
+set :environment, :production
+
 def get_sparkline (url, days, is_bar)
     begin
         request = HTTParty.get(url)
@@ -15,7 +18,7 @@ def get_sparkline (url, days, is_bar)
     month = Date.today.month
     year = Date.today.year
 
-    date_90_days_ago = Date.new(year, month, 1) - days
+    date_90_days_ago = Date.new(year, month, 1) - days.to_i
 
     last_month = (date_90_days_ago..Date.today).to_a
 
@@ -73,7 +76,7 @@ get "/" do
         days = 90
     end
 
-    if days > 120 || days < 1
+    if days.to_i > 120 || days.to_i < 1
         return "?days= must be between 1 and 120."
     end
 
@@ -107,7 +110,7 @@ get "/" do
     doc = "
     <p>sparkline for #{username.downcase} (last three months)</p>
     <p>total contributions: #{contributions_in_three_months}</p>
-    #{sparkline}' 
+    #{sparkline}
     <p>Source code available on <a href='https://github.com/capjamesg/mediawiki-sparkline-generator'>GitHub</a>.</p>
     "
 
