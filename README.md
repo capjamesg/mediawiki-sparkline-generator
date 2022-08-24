@@ -16,11 +16,20 @@ This project is a web server that:
 
 A hosted version of the sparkline service is available at [sparkline.jamesg.blog](https://sparkline.jamesg.blog).
 
-To retrieve a sparkline, specify the following values:
+The root endpoint for the service is:
 
-    https://sparkline.jamesg.blog/?api_url=[string]&username=[string]
+    https://sparkline.jamesg.blog
 
-`api_url` should be set to the root URL for your MediaWiki API. `username` should be your MediaWiki username.
+The following query string parameters are required:
+
+- `api_url`: The root URL for your MediaWiki API.
+- `username`: Your MediaWiki username.
+
+The following values are optional:
+
+- `days`: Number of days in history for which you want to retrieve stats. Min 1. Max 120.
+- `only_image`: By default, the API returns a text page with some meta information and the sparkline embedded. Specify an `only_image` value to retrieve only an image.
+- `is_bar`: Return a bar chart. This option is experimental.
 
 Please note the `username` attribute is case sensitive.
 

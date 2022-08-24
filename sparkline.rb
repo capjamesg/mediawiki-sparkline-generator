@@ -3,7 +3,7 @@ require "httparty"
 require "date"
 require "sinatra"
 
-def get_sparkline (url)
+def get_sparkline (url, days, is_bar)
     begin
         request = HTTParty.get(url)
     rescue
@@ -15,7 +15,7 @@ def get_sparkline (url)
     month = Date.today.month
     year = Date.today.year
 
-    date_90_days_ago = Date.new(year, month, 1) - 90
+    date_90_days_ago = Date.new(year, month, 1) - days
 
     last_month = (date_90_days_ago..Date.today).to_a
 
@@ -39,13 +39,43 @@ def get_sparkline (url)
         end
     end
 
-    return "https://jamesg.blog/assets/sparkline.svg?" + last_month_as_dict.values.join(","), last_month_as_dict.values.sum
+    if is_bar
+        svg_contents = ""
+        bars_created = 0
+        
+        for i in last_month_as_dict.values.each
+            # make sure at least a tiny bar is shown for each item
+            puts i
+            if i == 0
+                bar_height = 1.to_s
+            else
+                bar_height = i.to_s
+            end
+
+            svg_contents += '<rect width="1" height="' + bar_height + '" x="' + (bars_created + 2).to_s + '" y="0" />'
+            bars_created += 1
+        end
+
+        return '<svg width="100%" height="100%" viewBox="0 0 200 100" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:ev="http://www.w3.org/2001/xml-events">' + svg_contents + '</svg'
+    else
+        return "/sparkline.svg?" + last_month_as_dict.values.join(","), last_month_as_dict.values.sum
+    end
 end
 
 get "/" do
     username = params[:username]
     api_url = params[:api_url]
     only_image = params[:only_image]
+    days = params[:days]
+    is_bar = params[:is_bar]
+
+    if !days
+        days = 90
+    end
+
+    if days > 120 || days < 1
+        return "?days= must be between 1 and 120."
+    end
 
     if !username
         return "A ?username= value is required. This value is case sensitive."
@@ -55,9 +85,14 @@ get "/" do
         return "An ?api_url= value is required."
     end
 
+    # default is to generate a line graph
+    if !is_bar
+        is_bar = false
+    end
+
     url = "#{api_url}?action=query&format=json&list=usercontribs&ucuser=#{username}&uclimit=500"
 
-    sparkline, contributions_in_three_months = get_sparkline(url)
+    sparkline, contributions_in_three_months = get_sparkline(url, days, is_bar)
 
     if contributions_in_three_months == 500
         contributions_in_three_months = "500 (contributions are limited to 500 so the actual number of contributions made by this user may be higher)"
@@ -67,13 +102,24 @@ get "/" do
         redirect sparkline
     end
 
+    # <embed src='alt='Sparkline'></embed>
+
     doc = "
     <p>sparkline for #{username.downcase} (last three months)</p>
     <p>total contributions: #{contributions_in_three_months}</p>
-    <embed src='#{sparkline}' alt='Sparkline'></embed>
+    #{sparkline}' 
+    <p>Source code available on <a href='https://github.com/capjamesg/mediawiki-sparkline-generator'>GitHub</a>.</p>
     "
 
     return doc
+end
+
+get "/sparkline.svg" do
+    send_file File.read(File.join(settings.public_folder, "sparkline.svg"))
+end
+
+get "/sparkline_bar.svg" do
+    send_file File.read(File.join(settings.public_folder, "sparkline_bar.svg"))
 end
 
 error 400 do
