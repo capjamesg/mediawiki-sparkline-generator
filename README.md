@@ -57,7 +57,7 @@ This project is built in Ruby.
 
 ## License
 
-This project is licensed under an [MIT license](LICENSE).
+This project is licensed under an [MIT 0 license](LICENSE).
 
 ## Acknowledgements
 
