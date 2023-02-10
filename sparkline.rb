@@ -72,6 +72,10 @@ get "/" do
     days = params[:days]
     is_bar = params[:is_bar]
 
+    if !username || !api_url
+        return File.read(File.join(settings.public_folder, "index.html"))
+    end
+
     if !days
         days = 90
     end

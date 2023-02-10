@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>MediaWiki Sparkline Generator</title>
+        
+        <meta name="description" content="Generate sparklines showing the contribution history of a MediaWiki user." />
+        <meta property="og:image" content="https://screenshot.jamesg.blog/?url=https://sparkline.jamesg.blog">
+
+        <style>
+            html, body {
+                font-family: sans-serif;
+                margin: 0;
+                padding: 0;
+            }
+            * {
+                box-sizing: border-box;
+            }
+            nav {
+                background-color: #1E28BB63;
+                color: #fff;
+                padding: 1em;
+            }
+            nav ul {
+                list-style: none;
+                margin: 0;
+                padding: 0;
+                display: flex;
+                justify-content: space-between;
+            }
+            nav li {
+                display: inline-block;
+            }
+            nav a {
+                color: darkblue;
+                text-decoration: none;
+            }
+            nav a:hover {
+                text-decoration: underline;
+            }
+            main {
+                max-width: 35em;
+                margin: auto;
+            }
+            input {
+                padding: 0.5em;
+                border: 1px solid #ccc;
+                border-radius: 0.25em;
+                font-size: 1em;
+                width: 100%;
+            }
+            input[type="submit"] {
+                background-color: #1E28BB63;
+                color: #fff;
+                border: none;
+                cursor: pointer;
+            }
+            pre {
+                background-color: #eee;
+                padding: 1em;
+                border-radius: 0.25em;
+                margin: 1em 0;
+                white-space: pre-wrap;
+                word-wrap: break-word;
+            }
+            footer {
+                text-align: center;
+                padding: 1em;
+            }
+            label {
+                font-weight: bold;
+            }
+        </style>
+    </head>
+    <body>
+        <nav>
+            <ul>
+                <li><a href="/">MediaWiki Sparkline Generator</a></li>
+                <li><a href="https://jamesg.blog">Made by capjamesg</a></li>
+            </ul>
+        </nav>
+        <main>
+            <h1>MediaWiki Sparkline Generator 📈</h1>
+            <p>Generate a sparkline showing the contribution history of a MediaWiki user.</p>
+            <form action="/" method="GET">
+                <label for="username">Username (case sensitive)</label><br>
+                <input type="url" name="username" placeholder="User:Jamesg.blog"><br><br>
+                <label for="api_url">MediaWiki API URL</label><br>
+                <input type="url" name="api_url" placeholder="https://example.com"><br><br>
+                <input type="hidden" name="only_image" value="true">
+                <input type="submit" value="Retrieve Sparkline">
+            </form>
+            <h2>API Documentation</h2>
+            <h3>Retrieve a Sparkline</h3>
+            <p>Retrieve a sparkline showing the contribution history of a MediaWiki user.</p>
+            <pre>
+                <code>
+GET /?username=[]&api_url=[]
+                </code>
+            </pre>
+            <p>Example:</p>
+            <pre>
+                <code>
+GET /?username=User:Jamesg.blog&api_url=https://indieweb.org/wiki/api.php
+                </code>
+            </pre>
+            <p>Returns:</p>
+            <embed src="https://sparkline.jamesg.blog/?username=User:Jamesg.blog&api_url=https://indieweb.org/wiki/api.php&only_image=true" type="image/svg+xml" />
+            <p>To see raw metadata, do not include the <code>&only_image=true</code> parameter.</p>
+            <h2>Embed Your Sparkline</h2>
+            <p>Embed your sparkline in your website by using the following code:</p>
+            <pre>
+                <code>
+&lt;embed src="https://sparkline.jamesg.blog/?username=[username]&api_url=[api_url]&only_image=true" type="image/svg+xml" /&gt;
+                </code>
+            </pre>
+            <footer>
+                <p>MediaWiki Sparkline Generator was made with ❤️, 🧇 and ☕️ by <a href="https://jamesg.blog">capjamesg</a>. <a href="https://github.com/capjamesg/mediawiki-sparkline-generator">View Source</a>.
+            </footer>
+        </main>
+        <script>
+            /* add http:// to URL fields on blur or when enter is pressed */
+            document.addEventListener('DOMContentLoaded', function() {
+              function addDefaultScheme(target) {
+                if(target.value.match(/^(?!https?:).+\..+/)) {
+                  target.value = "http://"+target.value;
+                }
+              }
+              var elements = document.querySelectorAll("input[type=url]");
+              Array.prototype.forEach.call(elements, function(el, i){
+                el.addEventListener("blur", function(e){
+                  addDefaultScheme(e.target);
+                });
+                el.addEventListener("keydown", function(e){
+                  if(e.keyCode == 13) {
+                    addDefaultScheme(e.target);
+                  }
+                });
+              });
+            });
+          
+          </script>
+    </body>
+</html>
